@@ -66,7 +66,7 @@ Disk Erişimi, Buffer Yönetimi ve B+ Tree Yapılarının PostgreSQL Üzerinden 
 
 Veritabanı yönetim sistemlerinde (VTYS), performansı doğrudan etkileyen en önemli faktörlerden biri disk erişimidir. Disk, RAM’e kıyasla çok daha yavaş olduğu için modern veritabanları disk erişimini en aza indirecek şekilde tasarlanır. Bu çalışmada PostgreSQL açık kaynaklı veritabanı sistemi üzerinden; blok bazlı disk erişimi, buffer (önbellek) yönetimi ve B+ Tree veri yapılarının kullanımı incelenmiştir.
 
-Blok Bazlı Disk Erişimi (block_id + offset)
+## Blok Bazlı Disk Erişimi (block_id + offset)
 
 PostgreSQL, verileri diskte bloklar (pages) halinde saklar. Varsayılan olarak bir blok boyutu 8192 byte (8 KB)’dır. Bu değer kaynak kodda BLCKSZ sabiti ile tanımlanır. Disk üzerinde bir veriye erişirken, tek tek baytlar yerine bloklar okunur. Bu yaklaşım, disk I/O maliyetini azaltır ve erişimi daha verimli hale getirir.
 Blok bazlı erişimde iki temel kavram vardır:
@@ -77,7 +77,7 @@ Blok bazlı erişimde iki temel kavram vardır:
 
 Yani bir satıra erişmek için önce ilgili bloğa gidilir, ardından bloğun içindeki offset yardımıyla istenen veri bulunur. PostgreSQL’in disk erişim mekanizması işletim sistemi (OS) ile birlikte çalışır ve bu yapı OS seviyesindeki dosya sistemleriyle uyumludur.
 
-Buffer Pool ve Caching Mekanizması
+## Buffer Pool ve Caching Mekanizması
 
 Disk erişimi pahalı olduğu için PostgreSQL sık kullanılan verileri bellekte (RAM) tutar. Bu yapı buffer pool (shared buffers) olarak adlandırılır. Bir sorgu çalıştırıldığında PostgreSQL önce verinin buffer pool içinde olup olmadığını kontrol eder. Eğer veri RAM’de bulunuyorsa bu duruma cache hit, bulunmuyorsa cache miss denir.
 
@@ -85,13 +85,13 @@ Cache miss durumunda ilgili blok diskten okunur ve buffer pool’a kopyalanır. 
 
 Ayrıca PostgreSQL, prefetch mekanizması ile henüz ihtiyaç duyulmadan bazı blokları önceden belleğe alabilir. Bu sayede ardışık okuma işlemlerinde performans artırılır.
 
-Disk I/O Kavramı
+## Disk I/O Kavramı
 
 Disk I/O (Input / Output), verinin diskten okunması veya diske yazılması işlemlerini ifade eder. Disk I/O, RAM erişimine göre çok daha yavaş olduğu için veritabanı sistemleri bu işlemleri minimize etmeye çalışır. Buffer pool, caching ve prefetch gibi mekanizmalar bu amaca hizmet eder.
 
 PostgreSQL’de buffer yönetimi sayesinde her sorgu için doğrudan disk erişimi yapılmaz. Bunun yerine, mümkün olduğunca RAM üzerinden işlem yapılır. Bu yaklaşım, özellikle büyük veri setleriyle çalışan sistemlerde ciddi performans kazanımı sağlar.
 
-B+ Tree Veri Yapılarının Kullanımı
+## B+ Tree Veri Yapılarının Kullanımı
 
 PostgreSQL’de varsayılan indeks türü B+ Tree’dir (okunuşu: B plus tree). B+ Tree, dengeli bir ağaç yapısıdır ve veritabanlarında arama, sıralama ve aralık sorguları için son derece uygundur.
 
@@ -104,10 +104,6 @@ B+ Tree’nin temel özellikleri şunlardır:
 -Yaprak düğümler birbirine bağlıdır (linked list)
 
 Bu yapı sayesinde PostgreSQL, WHERE, ORDER BY, BETWEEN gibi sorguları çok hızlı bir şekilde gerçekleştirebilir. Kaynak kodda B+ Tree implementasyonu src/backend/access/nbtree dizini altında yer alır. Özellikle nbtree.c ve nbtsearch.c dosyaları, indeks arama ve gezinme işlemlerinin nasıl yapıldığını gösterir.
-
-Neden Açık Kaynak PostgreSQL?
-
-PostgreSQL açık kaynaklı bir veritabanı olduğu için disk erişimi, buffer yönetimi ve indeks yapıları doğrudan kaynak kod üzerinden incelenebilir. Bu da teorik bilgilerin pratikte nasıl uygulandığını görmeyi mümkün kılar. Bu çalışmada PostgreSQL seçilmesinin temel nedeni, veritabanı iç mekanizmalarının şeffaf bir şekilde gösterilebilmesidir.
 
 ## VT Üzerinde Gösterilen Kaynak Kodları
 
